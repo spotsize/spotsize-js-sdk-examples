@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>SDK Test</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@spotsize/js-sdk/dist/spotsize.min.js"></script>
+</head>
+<body>
+<div class="container mx-auto">
+    <div class="flex justify-center">
+        <div class="flex flex-col space-y-4 mt-3 items-center">
+            <div class="text-3xl font-bold ">spotsize javascript SDK</div>
+
+            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure('{{MODEL_ID}}')">Single Model</div>
+            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure(['{{MODEL_ID1}}', '{{MODEL_ID2}}'])">Multiple Models</div>
+
+            <div class="relative bg-gray-100" style="width:300px; height:300px;" id="qr">
+                <div class="w-full h-full absolute" id="qrPreloader">
+                    <div class="w-full h-full flex justify-center items-center">
+                        Preloader
+                    </div>
+                </div>
+            </div>
+
+            <div id="result"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //Init spotsize with your organizationId
+    spotsize.init('{{YOUR_ORGANIZATION_ID}}');
+
+    var result = document.getElementById('result');
+    var qr = document.getElementById('qr');
+    var qrPreloader = document.getElementById('qrPreloader');
+
+    console.log('Mobile:', spotsize.isMobile());
+    console.log('Android:', spotsize.isAndroid());
+    console.log('iOS:', spotsize.isIOS());
+
+    spotsize.events.onQRShown = function() {
+        showElement(qrPreloader, false);
+    }
+
+    function measure(modelId) {
+
+        showElement(qr, true);
+        showElement(qrPreloader, true);
+        result.innerText = '';
+
+        // Pass 'true' to 'useMockData' to directly receive mocked data and bypass the actual scan flow
+        spotsize.start(modelId, qr, false)
+            .then((recommendation) => {
+                var str = '';
+                var models = recommendation.models;
+                for (var n in models) {
+                    var model = models[n];
+                    str += '<strong>' + model.modelId + '</strong><br>';
+                    for (let p in model.labels) {
+                        var label = model.labels[p];
+                        str += label.labelCategory + ' ' + label.labelNumber + '<br>';
+                    }
+                    str += '<br>';
+                }
+                result.innerHTML = str;
+
+                showElement(qr, false);
+            })
+            .catch((error) => {
+                showElement(qr, false);
+                console.log('error', error);
+            });
+    }
+
+    function showElement(element, show) {
+        element.style.display = show ? 'block' : 'none';
+    }
+
+    showElement(qr, false);
+</script>
+</body>
+</html>
