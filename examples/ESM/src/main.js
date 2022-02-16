@@ -1,7 +1,7 @@
 import {init, start, isMobile, events, isAndroid, isIOS} from '@spotsize/js-sdk';
 
 //Init spotsize with your organizationId
-init('{{YOUR_ORGANIZATION_ID}}');
+init('YOUR_ORGANIZATION_ID');
 
 console.log('Mobile:', isMobile());
 console.log('Android:', isAndroid());
@@ -15,11 +15,11 @@ const qrPreloader = document.getElementById('qrPreloader');
 const error = document.getElementById('error');
 
 button1.onclick = async () => {
-    measure('{{MODEL_ID}}');
+    measure('YOUR_PRODUCT_ID');
 }
 
 button2.onclick = async () => {
-    measure(['{{MODEL_ID1}}', '{{MODEL_ID2}}']);
+    measure(['YOUR_PRODUCT_ID1', 'YOUR_PRODUCT_ID2']);
 }
 
 events.onQRShown = () => {
@@ -27,7 +27,7 @@ events.onQRShown = () => {
 }
 
 
-const measure = async (modelId) => {
+const measure = async (productId) => {
     error.innerText = '';
     result.innerHTML = '';
     showElement(qr, true);
@@ -35,7 +35,7 @@ const measure = async (modelId) => {
 
     try {
         // Pass 'true' to 'useMockData' to directly receive mocked data and bypass the actual scan flow
-        const recommendation = await start(modelId, qr, false);
+        const recommendation = await start(productId, qr, true);
 
         let str = '';
         const models = recommendation.models;

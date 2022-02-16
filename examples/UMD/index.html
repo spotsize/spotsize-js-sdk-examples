@@ -13,8 +13,8 @@
         <div class="flex flex-col space-y-4 mt-3 items-center">
             <div class="text-3xl font-bold ">spotsize javascript SDK</div>
 
-            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure('{{MODEL_ID}}')">Single Model</div>
-            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure(['{{MODEL_ID1}}', '{{MODEL_ID2}}'])">Multiple Models</div>
+            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure('YOUR_PRODUCT_ID')">Single Product</div>
+            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure(['YOUR_PRODUCT_ID1', 'YOUR_PRODUCT_ID2'])">Multiple Products</div>
 
             <div class="relative bg-gray-100" style="width:300px; height:300px;" id="qr">
                 <div class="w-full h-full absolute" id="qrPreloader">
@@ -32,7 +32,7 @@
 <script>
 
     //Init spotsize with your organizationId
-    spotsize.init('{{YOUR_ORGANIZATION_ID}}');
+    spotsize.init('YOUR_ORGANIZATION_ID');
 
     var result = document.getElementById('result');
     var qr = document.getElementById('qr');
@@ -46,14 +46,14 @@
         showElement(qrPreloader, false);
     }
 
-    function measure(modelId) {
+    function measure(productId) {
 
         showElement(qr, true);
         showElement(qrPreloader, true);
         result.innerText = '';
 
         // Pass 'true' to 'useMockData' to directly receive mocked data and bypass the actual scan flow
-        spotsize.start(modelId, qr, false)
+        spotsize.start(productId, qr, false)
             .then((recommendation) => {
                 var str = '';
                 var models = recommendation.models;
