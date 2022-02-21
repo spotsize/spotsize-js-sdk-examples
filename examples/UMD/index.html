@@ -13,10 +13,9 @@
         <div class="flex flex-col space-y-4 mt-3 items-center">
             <div class="text-3xl font-bold ">spotsize javascript SDK</div>
 
-            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure('YOUR_PRODUCT_ID')">Single Product</div>
-            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure(['YOUR_PRODUCT_ID1', 'YOUR_PRODUCT_ID2'])">Multiple Products</div>
+            <div class="p-3 bg-black text-white rounded-2xl text-center w-80 cursor-pointer" onclick="measure('YOUR_PRODUCT_ID')">Your Product</div>
 
-            <div class="relative bg-gray-100" style="width:300px; height:300px;" id="qr">
+            <div class="relative bg-gray-100 w-72 h-72" id="qr">
                 <div class="w-full h-full absolute" id="qrPreloader">
                     <div class="w-full h-full flex justify-center items-center">
                         Preloader
@@ -42,7 +41,7 @@
     console.log('Android:', spotsize.isAndroid());
     console.log('iOS:', spotsize.isIOS());
 
-    spotsize.events.onQRShown = function() {
+    spotsize.events.onQRShown = function () {
         showElement(qrPreloader, false);
     }
 
@@ -53,20 +52,21 @@
         result.innerText = '';
 
         // Pass 'true' to 'useMockData' to directly receive mocked data and bypass the actual scan flow
+        //                              ↓
         spotsize.start(productId, qr, false)
-            .then((recommendation) => {
-                var str = '';
-                var models = recommendation.models;
-                for (var n in models) {
-                    var model = models[n];
-                    str += '<strong>' + model.modelId + '</strong><br>';
-                    for (let p in model.labels) {
-                        var label = model.labels[p];
-                        str += label.labelCategory + ' ' + label.labelNumber + '<br>';
-                    }
-                    str += '<br>';
+            .then((response) => {
+
+                console.log(response);
+
+                if (response.status == 'SUCCESS') {
+                    var sizeInfo = response.getSize();
+                    var label = sizeInfo.label;
+                    var value = sizeInfo.value;
+
+                    result.innerHTML = label;
+                } else {
+                    result.innerHTML = 'No matching size found.';
                 }
-                result.innerHTML = str;
 
                 showElement(qr, false);
             })

@@ -8,7 +8,6 @@ console.log('Android:', isAndroid());
 console.log('iOS:', isIOS());
 
 const button1 = document.getElementById('button1');
-const button2 = document.getElementById('button2');
 const result = document.getElementById('result');
 const qr = document.getElementById('qr');
 const qrPreloader = document.getElementById('qrPreloader');
@@ -18,14 +17,9 @@ button1.onclick = async () => {
     measure('YOUR_PRODUCT_ID');
 }
 
-button2.onclick = async () => {
-    measure(['YOUR_PRODUCT_ID1', 'YOUR_PRODUCT_ID2']);
-}
-
 events.onQRShown = () => {
     showElement(qrPreloader, false);
 }
-
 
 const measure = async (productId) => {
     error.innerText = '';
@@ -35,21 +29,20 @@ const measure = async (productId) => {
 
     try {
         // Pass 'true' to 'useMockData' to directly receive mocked data and bypass the actual scan flow
-        const recommendation = await start(productId, qr, true);
+        //                                                        ↓
+        const response = await start(productId, qr, false);
 
-        let str = '';
-        const models = recommendation.models;
-        for (let n in models) {
-            const model = models[n];
-            str += `<strong>${model.modelId}</strong><br>`;
-            for (let p in model.labels) {
-                const label = model.labels[p];
-                str += `${label.labelCategory} ${label.labelNumber}<br>`;
-            }
-            str += '<br>';
+        if (response.status == 'SUCCESS') {
+            const sizeInfo = response.getSize();
+            const label = sizeInfo.label;
+            const value = sizeInfo.value;
+
+            result.innerHTML = label;
+        } else {
+            result.innerHTML = 'No matching size found.';
         }
+
         showElement(qr, false);
-        result.innerHTML = str;
 
     } catch (error) {
         showElement(qr, false);
