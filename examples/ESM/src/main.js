@@ -14,23 +14,24 @@ const qrPreloader = document.getElementById('qrPreloader');
 const error = document.getElementById('error');
 
 button1.onclick = async () => {
-    measure('YOUR_PRODUCT_ID');
+    measure('YOUR_PRODUCT_ID', 'PRODUCT_NAME');
 }
 
 events.onQRShown = () => {
     showElement(qrPreloader, false);
 }
 
-const measure = async (productId) => {
+const measure = async (productId, productName) => {
     error.innerText = '';
     result.innerHTML = '';
     showElement(qr, true);
     showElement(qrPreloader, true);
 
     try {
+        // The product name is optional and will be displayed on the native app's result screen above the size recommendation.
         // Pass 'true' to 'useMockData' to directly receive mocked data and bypass the actual scan flow
-        //                                                        ↓
-        const response = await start(productId, qr, false);
+        //                                                                                     ↓
+        const response = await start(productId, qr, {productName: productName, useMockData: false});
 
         if (response.status == 'SUCCESS') {
             const sizeInfo = response.getSize();
